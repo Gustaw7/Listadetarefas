@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="./imgs/lista.png">
+    <title>Lista de tarefas</title>
+</head>
+
+<body>
+    <main>
+        <div class="dashboard">
+            <img id="menu" src="./imgs/menu_FILL0_wght400_GRAD0_opsz48.svg" alt="">
+            <div class="nova_tarefa">
+                <input id="titulo" type="text" name="" id="" placeholder="Nome da tarefa">
+                <input id="descricao" type="text" name="" id="" placeholder="Descrição">
+                <input id="criar_tarefa" class="criar_tarefa" type="submit" value="Criar tarefa">
+            </div>
+        </div>
+        <div id="cartao_tarefas">
+        </div>
+    </main>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script>
+
+        // Codigo para criar o menu hamburguer
+        $("#menu").click(() => {
+            $(".nova_tarefa").toggle(1000)
+        })
+
+        // Função para excluir uma tarefa
+        function excluirTarefa(index) {
+            // Carrega o array de tarefas do localStorage
+            let tarefas = JSON.parse(localStorage.getItem("tarefas")) || [];
+
+            // Remove a tarefa selecionada do array
+            tarefas.splice(index, 1);
+
+            // Atualiza o array de tarefas no localStorage
+            localStorage.setItem("tarefas", JSON.stringify(tarefas));
+
+            // Remove a tarefa da página
+            $("#cartao_tarefas").empty();
+            tarefas.forEach(tarefa => {
+                $("#cartao_tarefas").append(
+                    `<div class="cartao_tarefa">
+                        <span class="titulo">${tarefa.titulo}</span>
+                        <span class="descricao">${tarefa.descricao}</span>
+                        <span class="data">${tarefa.data}</span>
+                        <button class="excluir" onclick="excluirTarefa(${tarefas.indexOf(tarefa)})">Excluir</button>
+                    </div>`
+                )
+            });
+        }
+
+        // Verifica se há dados salvos no localStorage
+        if (localStorage.getItem("tarefas")) {
+            // Se houver, carrega os dados e exibe na página
+            let tarefas = JSON.parse(localStorage.getItem("tarefas"))
+            tarefas.forEach(tarefa => {
+                $("#cartao_tarefas").append(
+                    `<div class="cartao_tarefa">
+                        <span class="titulo">${tarefa.titulo}</span>
+                        <span class="descricao">${tarefa.descricao}</span>
+                        <span class="data">${tarefa.data}</span>
+                        <button class="excluir" onclick="excluirTarefa(${tarefas.indexOf(tarefa)})">Excluir</button>
+                    </div>`
+                )
+            })
+        }
+
+        // Cria uma nova tarefa
+        $("#criar_tarefa").click(() => {
+            // Armazena os dados em um objeto
+            let tarefa = {
+                titulo: document.getElementById("titulo").value,
+                descricao: document.getElementById("descricao").value,
+                data: new Date().toLocaleDateString()
+            }
+            // Adiciona a nova tarefa ao array de tarefas
+            let tarefas = JSON.parse(localStorage.getItem("tarefas")) || []
+            tarefas.push(tarefa)
+            // Salva o array de tarefas no localStorage
+            localStorage.setItem("tarefas", JSON.stringify(tarefas))
+            // Exibe a nova tarefa na página
+            $("#cartao_tarefas").append(
+                `<div class="cartao_tarefa">
+                    <span class="titulo">${tarefa.titulo}</span>
+                    <span class="descricao">${tarefa.descricao}</span>
+                    <span class="data">${tarefa.data}</span>
+                    <button class="excluir" onclick="excluirTarefa(${tarefas.indexOf(tarefa)})">Excluir</button>
+                </div>`
+            )
+            // Limpa os campos do formulário
+            $("#titulo").val("")
+            $("#descricao").val("")
+        })
+    </script>
+    <script src="./script.js"></script>
+</body>
+
+</html>
